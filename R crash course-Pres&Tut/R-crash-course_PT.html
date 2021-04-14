@@ -3256,7 +3256,7 @@ pre {
 
 <pre class = 'prettyprint lang-r'>getwd()</pre>
 
-<pre >## [1] &quot;G:/My Drive/FPCEUP/R trainning/PDPsi/R_crashcourse&quot;</pre>
+<pre >## [1] &quot;G:/My Drive/FPCEUP/R trainning/GitRepo/R crash course&quot;</pre>
 
 <p><em>Como o podemos alterar?</em></p>
 
@@ -3540,7 +3540,7 @@ rmotivation &lt;- c(60, 90, 10, 50) # motivation in a scale from 1 to 100</pre>
 dailyuse &lt;- round(dailyuse, 0) # rounds the vector to 0 decimals
 dailyuse</pre>
 
-<pre >##  [1] 2 2 2 2 2 2 3 2 3 3 2 2 2 2 2 3 1 2 2 3</pre>
+<pre >##  [1] 1 2 4 2 2 2 2 1 2 2 2 3 2 1 2 2 2 1 3 2</pre>
 
 <pre class = 'prettyprint lang-r'>class(dailyuse)</pre>
 
@@ -3555,10 +3555,10 @@ dailyuse</pre>
 dailyuse</pre>
 
 <pre >##      day1 day2 day3 day4 day5
-## [1,]    2    2    3    2    1
-## [2,]    2    2    3    2    2
-## [3,]    2    3    2    2    2
-## [4,]    2    2    2    3    3</pre>
+## [1,]    1    2    2    2    2
+## [2,]    2    2    2    1    1
+## [3,]    4    2    2    2    3
+## [4,]    2    1    3    2    2</pre>
 
 <pre class = 'prettyprint lang-r'>class(dailyuse)</pre>
 
@@ -3570,19 +3570,19 @@ dailyuse</pre>
 
 <pre class = 'prettyprint lang-r'>dailyuse[c(1:3), 2]  # select rows from 1 to 3 and columns 2</pre>
 
-<pre >## [1] 2 2 3</pre>
+<pre >## [1] 2 2 2</pre>
 
 <pre class = 'prettyprint lang-r'>dailyuse[c(1, 4), ] # leaving column field blank will select entire columns</pre>
 
 <pre >##      day1 day2 day3 day4 day5
-## [1,]    2    2    3    2    1
-## [2,]    2    2    2    3    3</pre>
+## [1,]    1    2    2    2    2
+## [2,]    2    1    3    2    2</pre>
 
 <pre class = 'prettyprint lang-r'>dailyuse[ -2:-3, -1] # select all rows 2 and 3 and columns 1</pre>
 
 <pre >##      day2 day3 day4 day5
-## [1,]    2    3    2    1
-## [2,]    2    2    3    3</pre>
+## [1,]    2    2    2    2
+## [2,]    1    3    2    2</pre>
 
 </article></slide><slide class=""><hgroup><h2>Classes de objetos e coersão</h2></hgroup><article  id="classes-de-objetos-e-coersão">
 
@@ -3649,10 +3649,10 @@ class(c)</pre>
 df</pre>
 
 <pre >##   id   name ruser rbaseskills rmotivation day1 day2 day3 day4 day5
-## 1  1    Ana  TRUE          40          60    2    2    3    2    1
-## 2  2 Manuel FALSE          35          90    2    2    3    2    2
-## 3  3 Afonso FALSE          20          10    2    3    2    2    2
-## 4  4  Maria  TRUE          60          50    2    2    2    3    3</pre>
+## 1  1    Ana  TRUE          40          60    1    2    2    2    2
+## 2  2 Manuel FALSE          35          90    2    2    2    1    1
+## 3  3 Afonso FALSE          20          10    4    2    2    2    3
+## 4  4  Maria  TRUE          60          50    2    1    3    2    2</pre>
 
 </article></slide><slide class=""><hgroup><h2>Estruturas de dados - Bases de dados (cont.)</h2></hgroup><article  id="estruturas-de-dados---bases-de-dados-cont.">
 
@@ -3688,7 +3688,7 @@ mtcars$mpg</pre>
 
 <pre >##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
 ## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
-## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2</pre>
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3</pre>
 
 </article></slide><slide class=""><hgroup><h2>Estruturas de dados - Bases de dados (cont.)</h2></hgroup><article  id="estruturas-de-dados---bases-de-dados-cont.-2">
 
@@ -3736,7 +3736,7 @@ mtcars$mpg</pre>
 
 <pre class = 'prettyprint lang-r'>bechdel &lt;-
   read.table(
-    &quot;G:\\My Drive\\FPCEUP\\R trainning\\PDPsi\\R_crashcourse\\R crash course-Data\\bechdel.csv&quot;,
+    &quot;G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course-Data\\bechdel.csv&quot;,
     header = TRUE,
     sep = &quot;;&quot;,
     quote = &quot;\&quot;&quot;, 
@@ -3764,7 +3764,7 @@ str(bechdel)</pre>
 
 <pre class = 'prettyprint lang-r'>bechdel &lt;-
   read.csv2(
-    &quot;G:\\My Drive\\FPCEUP\\R trainning\\PDPsi\\R_crashcourse\\R crash course-Data\\bechdel.csv&quot;,
+    &quot;G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course-Data\\bechdel.csv&quot;,
     fileEncoding=&quot;UTF-8-BOM&quot;)
 head(bechdel, 2)</pre>
 
@@ -3830,7 +3830,7 @@ tail(ls(&quot;package:Hmisc&quot;))</pre>
 
 <h3>Importar dados do SPSS com a função <strong>foreign::read.spss()</strong></h3>
 
-<pre class = 'prettyprint lang-r'>bechdel &lt;- read.spss(&quot;G:\\My Drive\\FPCEUP\\R trainning\\PDPsi\\R_crashcourse\\R crash course-Data\\bechdel.sav&quot;, 
+<pre class = 'prettyprint lang-r'>bechdel &lt;- read.spss(&quot;G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course-Data\\bechdel.sav&quot;, 
                      to.data.frame = TRUE)</pre>
 
 <pre >## re-encoding from UTF-8</pre>
@@ -3851,7 +3851,7 @@ dim(bechdel)</pre>
 
 <h3>Importar dados do SPSS com a função <strong>hmisc::spss.get()</strong></h3>
 
-<pre class = 'prettyprint lang-r'>bechdel &lt;- spss.get(&quot;G:\\My Drive\\FPCEUP\\R trainning\\PDPsi\\R_crashcourse\\R crash course-Data\\bechdel.sav&quot;)
+<pre class = 'prettyprint lang-r'>bechdel &lt;- spss.get(&quot;G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course-Data\\bechdel.sav&quot;)
 str(bechdel)</pre>
 
 <pre class = 'prettyprint lang-r'>head(bechdel, 3)</pre>
@@ -3892,7 +3892,7 @@ str(bechdel)</pre>
 
 <pre class = 'prettyprint lang-r'>sample(1:10, 4)</pre>
 
-<pre >## [1] 4 5 2 9</pre>
+<pre >## [1]  9  8 10  1</pre>
 
 </article></slide><slide class=""><hgroup><h2>Funções R (cont.)</h2></hgroup><article  id="funções-r-cont.">
 
@@ -4225,7 +4225,7 @@ help(package=&quot;data.table&quot;)</pre>
 
 <pre class = 'prettyprint lang-r'>?data.table::fread</pre>
 
-<pre class = 'prettyprint lang-r'>bechdel &lt;- fread(&quot;G:\\My Drive\\FPCEUP\\R trainning\\PDPsi\\R_crashcourse\\R crash course-Data\\bechdel.csv&quot;)
+<pre class = 'prettyprint lang-r'>bechdel &lt;- fread(&quot;G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course-Data\\bechdel.csv&quot;)
 names(bechdel)</pre>
 
 <pre >## [1] &quot;movie_year&quot;          &quot;movie_title&quot;         &quot;bechdel_test&quot;       
