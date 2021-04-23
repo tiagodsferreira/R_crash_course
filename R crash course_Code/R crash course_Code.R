@@ -250,6 +250,19 @@ str(bechdel)
 head(bechdel, 3)
 
 
+
+# Save one object 
+saveRDS(bechdel, file = "G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.rds")
+readRDS("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.rds")
+
+
+
+# Save multiple objects
+save(bechdel, mtcars, file= "G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\data.RData")
+load(file= "G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\data.RData")
+rm(list=ls())
+
+
 # Funções integradas (built-in) para procedimentos estatísticos básicos
 
 sample(1:10, 4)
