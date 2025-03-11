@@ -26,3 +26,5 @@ Ficheiro sintaxe R com código utilizado no módulo pedagógico
 
 ## Pasta "R crash course_Exer"
 Contem exercício sobre conteúdos de introdução ao R (Parte 1)
+
+[![Open Materials](https://img.shields.io/badge/Open-Materials-green?style=for-the-badge&logo=open-access)](https://github.com/tiagodsferreira/R_crash_course/)
