@@ -1,0 +1,939 @@
+---
+title: "Análise de dados longitudinais: Parte I - Breve introdução ao R"
+author: "Tiago Ferreira"
+date: "Abril, 2022"
+output:
+  ioslides_presentation: 
+    widescreen: true
+  beamer_presentation: default
+  slidy_presentation: default
+---
+
+<style>
+pre {
+    line-height: 1.2em;
+    font-size: 16px;
+}
+</style>
+
+
+
+```{r setup, include=FALSE}
+library("datasets")  
+library("lattice")
+library("psych")
+library("Hmisc")
+library("ggplot2")
+library("knitr")
+library("png")
+library("lavaan")
+library("semTools")
+library("knitr")
+library("kableExtra")
+library(data.table)
+library(semPlot)
+
+# Some customization.  You can alter or delete as desired (if you know what you are doing).
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="medium")   # slightly smaller font for code
+
+
+```
+
+## O que é o R?  
+- Software estatístico livre  
+- Ambiente computacional e linguagem de programação  
+- Ferramenta para análise estatística e visualização de dados  
+
+```{r, include = FALSE}
+SPSS <- c("Mais amigo do utilizador (point-and-click)", "Gráficos básicos", "Procedimentos estatísticos limitados", "Programação fechada")
+R <- c("Menos amigo do utilizador (syntax-based)", "Gráficos profissionais", "Procedimentos estatísticos ilimitados", "Programação aberta e flexível")
+# install.packages("kableExtra")
+# library(knitr)
+# library(kableExtra)
+knitr::kable(data.frame(R, SPSS), format = "markdown")
+```  
+|R                                        |SPSS                                       |
+|:----------------------------------------|:------------------------------------------|
+|Menos amigo do utilizador (syntax-based) |Mais amigo do utilizador (point-and-click) |
+|Gráficos profissionais                   |Gráficos básicos                           |
+|Procedimentos estatísticos ilimitados    |Procedimentos estatísticos limitados       |
+|Programação aberta e flexível            |Programação fechada                        |
+
+
+## Baixar e Instalar o R e RStudio
+O R e RStudio estão disponíveis de forma livre:  
+1. Download R: http://cran.r-project.org/    
+2. Download RStudio: http://www.rstudio.org/    
+
+O R e RStudio são compatíveis com os principais OS's:  
+- PC  
+- MAC  
+- Linux
+
+**IMPORTANTE:**   
+*Primeiro instalar o R e só depois o RStudio*  
+
+
+## Ambiente R
+```{r, out.width = "400px", echo = FALSE}
+knitr::include_graphics("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R crash course-Figures\\r.png")
+```
+
+A instalação básica do R incluí um conjunto de recurso que permitem:  
+- Criar diferentes tipos de estruturas de dados  
+- Editar e gerir dados  
+- Analisar e visualizar dados    
+
+
+*Estas funcionalidades são facilmente ampliadas pela instalação de pacotes desenvolvidos pela comunidade de utilizadores do R. Estes pacotes estão disponíveis para utilização livre em [CRAN](https://www.r-project.org/).* 
+
+
+## O RStudio (IDE)  
+Painéis do RStudio  
+- Código fonte (**File -> New File -> R Script**)  
+- Consola do R  
+- Ambiente e Histórico  
+- Ficheiros, gráficos, pacotes e ajuda  
+
+```{r, out.width = "600px", echo = FALSE}
+knitr::include_graphics("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R crash course-Figures\\RStudio_panels.jpg")
+```
+
+## Razões para utilizar o RStudio  
+O RStudio é um ambiente de desenvolvimento integrado (IDE) que torna mais simples a utilização do R:  
+
+* Torna mais fácil a produção de scripts (code completion)  
+* Facilita a edição e execução do código R  
+* Acesso facilitado (interface gráfico) a muitas funcionalidades do R  
+* Permite criar e partilhar projetos R  
+* Torna outputs mais acessíveis  
+* Inclui um interface para produção de relatórios em diversos formatos (RMarkdown)  
+* [e muito mais...](https://www.r-bloggers.com/top-6-reasons-you-need-to-be-using-rstudio/)
+
+
+## O R tem uma curva de aprendizagem longa
+*Não desanimem!!!*  
+
+```{r, out.width = "400px", echo = FALSE}
+knitr::include_graphics("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R crash course-Figures\\learning curve.jpg")
+```
+
+
+
+# AGENDA | Breve introdução ao R e RStudio {.smaller}  
+
+<div class="gray2">
+- **Funcionamento básico do R e RStudio**  
+- **Operadores e objetos**  
+- **Estruturas de dados**  
+- **Funções integradas (built-in) para procedimentos estatísticos básicos**  
+- **Alguns pacotes úteis**   
+</div>
+
+
+# Funcionamento básico do R e RStudio
+
+## Funções no R  
+- As funcionalidades do R estão acessíveis por meio de **funções**    
+    - *Conjunto de operações combinadas para realizar uma tarefa específica*  
+    
+- Estrutura geral de um função:  
+    - **Nome.da.função**  
+    - **Diferentes argumentos (arg1, arg2, ...)**  
+    - **O resultado de uma função pode ser usada para criar um novo objeto**   
+
+```{r}
+print("Olá!")
+```
+*"Run" ou atalho "ctrl + enter" para executar o código R*
+
+
+## Sessão de trabalho no R
+- Definida por um diretório ou pasta de trabalho (**working directory - WD**)       
+    - O WD está localizado no nosso computador  
+    - Serão lá são guardados os ficheiros gerados durante a sessão de trabalho;  
+  
+*Qual o nosso WD atual?*  
+```{r}
+getwd()
+```
+
+*Como o podemos alterar?*    
+```{r,eval=FALSE}
+setwd("C:/Users/tiago/Desktop")
+```
+
+
+# Operadores e objetos 
+
+## Comunicação com o R - criar objetos
+A capacidade de formar e manipular objetos é uma das caraterísticas centrais do R   
+- Um objeto R é formado pela atribuição de dados a um valor  
+- Esta atribuição é feita pelo operador assignment (**"<-"**)  
+- Os objetos criados ficam disponíveis no **global environment**  
+
+*Podemos adicionar comentários ao nosso código usando "#"* 
+```{r, echo = TRUE}
+x1 <- 10 # assigns number 10 to object "x1"
+x1 # display object "x1""
+```
+
+## Comunicação com o R - criar (mais) objetos
+A lista de objetos que podemos formar no R é grande  
+  - Desde simples conjuntos numéricos até listas de grandes bases de dados
+
+```{r, echo = TRUE}
+x2 <- 0:10  # assigns integers from 0 to 20 to object "x2" 
+x2
+
+x3 <- c(5, 4, 1, 6, 7, 2, 2, 3, 2, 8)  # using concatenate to create a numeric vector 
+x3
+```
+
+## Comunicação com o R - Manipular objetos
+A interação com o R é feita através de uma linguagem de programação ou sintaxe  
+  
+- Para além de criar objetos (<-) o R dispõe de vários operadores para manipular objetos 
+  
+- Os operadores mais simples são:   
+  - Aritméticos  
+  - Relacionais  
+  - Booleanos
+
+*Na verdade, estes operadores são funções muito simples, que não precisam de mais de um ou dois argumentos para realizar um determinado procedimento*
+
+  
+## Operadores aritméticos    
+...para operações aritméticas
+```{r, echo = TRUE}
+x1 <- 2 + 2 #	addition
+x2 <- 6 - 2 #	subtraction
+x3 <- x1 * x2 #	multiplication
+x4 <- x3 /	8 # division
+x5 <- x2^x4 # exponentiation; OR 6**2
+print(c(x1, x2, x3, x4, x5))
+```
+
+## Operadores relacionais (ou lógicos)  
+...para comparar valores
+```{r, echo = TRUE, eval=FALSE}
+x1 < 5 # smaller than 
+x1 <= x5 # smaller or equal than
+x1 >= x2 # larger or equal than
+x1 == x1	# exactly equal to
+x1 != x5 # not equal to
+```
+
+## Operadores booleanos  
+...para realizar operações booleanas:  
+```{r, echo = TRUE}
+x1 | x3 == 4 #	x1 OR x3
+x1 & x3 <= 16	# x1 AND x3
+```
+
+## Gestão de objetos
+```{r, eval  = FALSE}
+ls()  #  return the names of the objects in the specified environment
+
+save.image("myfile") # saves the workspace to myfile (def. = .RData)
+
+save(objectlist, file = "myfile.RData") # saves a list of objects to a file
+
+rm(x1)  # remove "x1" from the environment
+
+rm(list = ls())  # using ls() in the argument "list" will 
+                 # remove all objects from the environment
+```
+
+## Limpar consola
+```{r, eval=FALSE, echo = TRUE}
+cat("\014") # cleans console 
+
+# OR 
+
+shell("cls") # shell("clear") if Linux or Mac.
+
+# OR shortcut Ctrl + l
+```
+
+## Ajuda  
+### Existem várias formas de aceder a ajuda no R 
+
+```{r, eval= F}
+help.start() # general help
+
+help("rm") # help on the function "rm" (quotation marks are optional) | OR ?rm
+
+help.search("ls") # searches the help system using the keyword "ls" | OR ??ls
+```
+
+### Os menus de ajuda permitem:  
+- Clarificar o objetivo de uma função  
+- Perceber quais os argumentos e valores de funções  
+- Aceder a fundamentação  
+- Aceder a exemplos   
+
+
+# Estruturas de dados
+
+## Estruturas de dados no R
+- Habitualmente, quando falamos em bases de dados, pensamos em estruturas tabulares com linhas e colunas  
+   
+```{r, include = FALSE}
+id <- c(1:5)
+sex <- c("Male", "Male", "Female", "Male", "Female")
+t0_date <- as.Date(c('2017-11-2','2017-11-4','2017-11-5','2017-11-10','2017-11-11'))
+t0_beh_prob <- c(11, 14, 5, 20, 16)
+intervention <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
+t1_date <- as.Date(c('2018-11-1','2018-11-3','2018-11-4','2018-11-10','2018-11-11'))
+t1_beh_prob <- c(8, 11, 7, 15, 16)
+
+data_beh <- data.frame(id, sex, t0_date, t0_beh_prob, intervention, t1_date, t1_beh_prob)
+
+# install.packages("kableExtra")
+# library(knitr)
+# library(kableExtra)
+knitr::kable(data_beh, format = "markdown")
+```  
+
+| id|sex    |t0_date    | t0_beh_prob|intervention |t1_date    | t1_beh_prob|
+|--:|:------|:----------|-----------:|:------------|:----------|-----------:|
+|  1|Male   |2017-11-02 |          11|TRUE         |2018-11-01 |           8|
+|  2|Male   |2017-11-04 |          14|TRUE         |2018-11-03 |          11|
+|  3|Female |2017-11-05 |           5|FALSE        |2018-11-04 |           7|
+|  4|Male   |2017-11-10 |          20|TRUE         |2018-11-10 |          15|
+|  5|Female |2017-11-11 |          16|FALSE        |2018-11-11 |          16|  
+  
+
+*Geralmente, as linhas correspondem a observações e as colunas a variáveis*  
+
+
+## Estruturas de dados no R
+### 5 classes gerais de dados:  
+- **Vector (vetores)**  
+- **Matrix (matrizes)**  
+- Array (matrizes multidimensionais)  
+- **Data frame (bases de dados)**  
+- List (de vetores, matrizes, bases de dados, listas...)  
+
+*Estas estruturas diferem quanto ao tipo de dados, forma como são criadas, complexidade, código de identificação e modo de acesso aos seus valores (indexação)*    
+ 
+## Estruturas de dados - Vetores  
+Estrutura de dados unidimensional que pode conter dados do tipo:  
+- numérico  
+- carater  
+- lógicos 
+
+#### **c()**, para criar vetores no R  
+```{r, echo = TRUE}
+id <- 1:4 # sequential numerical vector 
+id
+age <-  c(20, 24, 21, 40) # non-sequential numerical vector
+class(age) # returns object class
+```
+
+## Estruturas de dados - Vetores (cont.)  
+```{r, echo = TRUE}
+name <- c("Ana", "Manuel", "Afonso", "Maria") # character vector
+name
+class(name)
+length(name) # returns object lenght
+```
+
+## Estruturas de dados - Vetores (cont.)  
+```{r, echo = TRUE}
+ruser <- c(TRUE, FALSE, FALSE, TRUE) # logical vector
+ruser
+class(ruser)
+table(ruser)
+```
+
+## Estruturas de dados - Vetores (cont.)  
+### O acesso a elementos de um vetor é feito através de indexação  
+```{r, echo = TRUE}
+rbaseskills <- c(40, 35, 20, 60) # previous skills in R using a scale from 1 to 100
+rmotivation <- c(60, 90, 10, 50) # motivation in a scale from 1 to 100
+```
+
+- Cada elemento de um vetor tem o seu próprio índice, possibilitando a identificação do elemento  
+```{r, echo = TRUE}
+rbaseskills[2] # returns vector's 2nd value
+rbaseskills[c(2,3)] # returns vector's 2nd and 3rd values
+```
+
+## Estruturas de dados - Vetores (cont.)  
+### Operações básicas com vetores
+```{r, echo = TRUE}
+rbaseskills > rmotivation # logical operations
+rbaseskills + 1 # arithmetic operations
+rbaseskills + rmotivation # arithmetic operations
+```
+
+## Estruturas de dados - Matrizes  
+### Estrutura de dados bidimensional 
+**Todos os elementos apresentam o mesmo tipo de dados**   
+  - Semelhante a um vetor, diferindo apenas nos atributos dimensionais (row, col)     
+
+```{r, echo = TRUE}
+dailyuse <- rnorm(20, mean = 2, sd = .5) # vector with 20 elements
+dailyuse <- round(dailyuse, 0) # rounds 0 decimals
+dailyuse
+class(dailyuse)
+```
+
+## Estruturas de dados - Matrizes (cont.)  
+#### A função **matrix()** pode ser utilizada para criar matrizes  
+```{r, echo = TRUE}
+dailyuse <- matrix(dailyuse,  nrow = 4, ncol = 5, dimnames = list(NULL, 
+                              c("day1", "day2", "day3", "day4", "day5")))
+dailyuse
+class(dailyuse)
+```
+
+## Estruturas de dados - Matrizes (cont.)  
+### Acesso a elementos de matrizes  
+```{r}
+dailyuse[c(1:3), 2]  # select rows from 1 to 3 and column 2
+dailyuse[c(1, 4), ] # leaving column field blank will select the entire column
+dailyuse[ -2:-3, -1] # select all rows except rows 2 and 3 and column 1
+```
+
+## Classes de objetos e coerção
+O R lida com as seguintes classes ou tipos de dados:  
+- Estruturas lógicas (Verdadeiro ou Falso)   
+- Números (inteiros ou decimais)   
+- Caracteres  
+
+```{r, echo=TRUE, eval=FALSE}
+a <- "one" # Creates a character vector
+b <- 1 # Creates a numeric vector
+c <- 1L # Creates a numeric (integer) vector
+d <- TRUE # Creates a logical vector
+
+# Prints objects and their classes
+print(c(a, class(a)))
+print(c(b, class(b)))
+print(c(c, class(c)))
+print(c(d, class(d)))
+```
+
+## Classes de objetos e coerção (cont.)   
+Vetores e Matrizes apenas podem conter um **ÚNICO** tipo de dados (e.g., numéricos, lógicos, carateres)  
+  - O R automaticamente força estes objetos ao mesmo tipo de dados (coersion)  
+
+#### A ordem de coerção é a seguinte:  
+
+**logical -> integer -> numeric -> character**  
+
+#### **Quiz**   
+1. Crie e tente identificar a classe dos vetores a, b e c;   
+2. Confirme o seu palpite utilizando a função apropriada.    
+
+```{r, echo=TRUE}
+a <- c(1.4, "apple", 1, 6.3, "fig", 2, TRUE) 
+b <- c("apple", TRUE, FALSE, "pear", "orange", "blueberry")
+c <- c(TRUE, 1, 0, TRUE, 0, FALSE)
+```  
+
+## Classes de objetos e coerção (cont.)   
+O utilizador pode impor um outro tipo de dados ao objeto  
+  - função **as.<class name>()**  
+```{r, echo=TRUE}
+a <- c(TRUE, FALSE, FALSE, TRUE, TRUE, FALSE)
+class(a)
+b <- as.numeric(a)
+class(b)
+c <- as.character(b)
+class(c)
+```
+
+**IMP. Não é possível ter mais do que um tipo de dados em vetores e matrizes!!!** 
+
+## Estruturas de dados - Bases de dados   
+
+### Uma Base de Dados (BD) é um tipo especial de matriz   
+- Permite colunas com diferentes tipos de dados    
+  - Semelhante a BD usadas noutros pacotes estatísticos (eg., SPSS)     
+
+#### Usamos a função **data.frame()** para criar uma nova BD  
+```{r, echo = TRUE}
+df  <-  data.frame(id, name, ruser, rbaseskills, rmotivation, dailyuse) 
+df
+```
+
+## Estruturas de dados - Bases de dados (cont.)
+Na sua instalação base, o R incluí um conjunto de BD
+
+#### Usar **data()** para visualizar BD disponíveis  
+```{r, eval=FALSE}
+data() # lists all available datasets
+browseURL("http://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html") 
+# informations about available datasets
+?mtcars # diplays information about cars dataset
+```
+
+#### Vamos usar a mtcars  
+```{r}
+data(mtcars)  # loading a dataset
+dim(mtcars)
+```
+
+## Estruturas de dados - Bases de dados (cont.)
+```{r, eval=FALSE}
+names(mtcars)
+ncol(mtcars)
+nrow(mtcars)
+str(mtcars)
+```
+
+```{r, eval=FALSE}
+mtcars # displays a dataset
+head(mtcars,2)
+mtcars[1:3, 1]
+mtcars$mpg
+```  
+
+```{r}
+mtcars[sample(1:nrow(mtcars), 2), ]
+```  
+
+
+## Estruturas de dados - Bases de dados (cont.)
+Criação e importação de Bases de dados  
+- É comum lidarmos com dados provenientes de diferentes fontes e em formatos distintos   
+- Ver guia oficial para importação/exportação de dados em [CRAN](https://cran.r-project.org/doc/manuals/R-data.pdf)  
+
+```{r, out.width = "470px", echo = FALSE}
+knitr::include_graphics("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R crash course-Figures\\Rimport.JPG")
+```
+  
+*Fig1. Fontes de importação de dados no R (in [Kabacoff, 2015](https://www.manning.com/books/r-in-action-second-edition)).*
+
+## Estruturas de dados - Bases de dados (cont.)
+O R permite a introdução de dados através do teclado   
+  - No entanto esta não é a opção mais prática  
+  
+A opção mais comum é simplesmente importar dados noutros formatos:  
+  - Formato de texto    
+  - SPSS  
+  - Excel  
+
+*A importação de dados para o R de outros pacotes estatísticos (e.g., SAS ou STATA) é bastante direta.*
+
+
+## Estruturas de dados - Bases de dados (cont.)
+Uma das formas mais fáceis de importar dados para o R é através de documentos em formato de **texto simples**   
+- Ex. ficheiros ".CSV" (*Comma Separated Values*)  
+
+Para importar dados de ficheiros de texto delimitado usar **read.table()**  
+- Esta função cria uma BD no R de formato tabular, a partir de ficheiros de texto  
+- Cada linha de texto corresponde uma linha na tabela
+
+#### dataframe <- read.table("file", options)
+```{r, eval=FALSE}
+formals(read.table) # the list of function's arguments
+?read.table
+?formals
+```
+
+## Estruturas de dados - Bases de dados (cont.)
+Como exemplo vamos usar a BD *bechdel*    
+ - Esta base de dados inclui os resultados deste teste a 1794 filmes   
+
+Esta medida de viés de género considera 3 critérios:  
+1. Existem no filme pelo menos duas mulheres com nome definido;  
+2. Essas mulheres conversam uma com a outra em algum momento do filme;  
+3. Essa conversa não é sobre uma personagem do sexo masculino.  
+
+**O filme passa no teste se cumprir este 3 critérios**
+
+*Por exemplo, o filme “The Avengers” tem pelo menos duas personagens do sexo feminino, no entanto essas personagens não conversam uma com a outra. Este filme não cumpre o segundo critério e por isso falha no teste.*  
+
+[Mais informações acerca do bechdel test neste link](https://fivethirtyeight.com/features/the-dollar-and-cents-case-against-hollywoods-exclusion-of-women/) 
+
+## Estruturas de dados - Bases de dados (cont.)
+Importação do ficheiro "bechdel.csv" e criação da base de dados "bechdel"
+```{r}
+bechdel <-
+  read.table(
+    "G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.csv",
+    header = TRUE,
+    sep = ";",
+    quote = "\"", 
+    dec = ".",
+    na.strings = " ",
+    stringsAsFactors = FALSE,
+    colClasses =  c("numeric", "character", "numeric", "factor", "numeric", "numeric", "numeric"),
+    fileEncoding="UTF-8-BOM"
+  )
+
+str(bechdel)
+```
+
+## Estruturas de dados - Bases de dados (cont.)
+Em vez da função genérica **read.table()** podemos recorrer à função **read.csv2()**  
+
+- Esta função define vários argumentos por defeito, "poupando" algumas linhas de código
+
+```{r, echo=TRUE}
+bechdel <-
+  read.csv2(
+    "G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.csv",
+    fileEncoding="UTF-8-BOM")
+head(bechdel, 2)
+dim(bechdel)
+```
+
+
+## Estruturas de dados - Bases de dados (cont.)
+```{r, echo =TRUE}
+names(bechdel)
+summary(bechdel)
+```
+
+## Estruturas de dados - Bases de dados (cont.)
+O R permite também importar diretamente de programas estatísticos como o SPSS   
+
+- No entanto, para este efeito, teremos que instalar alguns pacotes adicionais  
+
+#### instalar o pacote foreign ou o pacotes Hmisc
+
+```{r, echo=TRUE}
+#install.packages("foreign", "Hmisc")
+library(foreign)
+library(Hmisc)
+tail(ls("package:Hmisc"))
+```
+
+```{r, eval=FALSE}
+?read.spss
+```
+
+
+## Estruturas de dados - Bases de dados (cont.)
+### Importar do SPSS com a função **foreign::read.spss()**
+```{r}
+bechdel <- read.spss("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.sav", 
+                     to.data.frame = TRUE)
+```
+```{r, eval=FALSE}
+str(bechdel)
+dim(bechdel)
+```
+```{r}
+bechdel[1234, ]
+```
+
+
+## Estruturas de dados - Bases de dados (cont.)
+### Importar do SPSS com a função **hmisc::spss.get()**
+```{r, eval=FALSE}
+bechdel <- spss.get("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.sav")
+str(bechdel)
+```
+```{r}
+head(bechdel, 3)
+```
+
+# Funções integradas (built-in) para procedimentos estatísticos básicos
+
+## Funções R
+### A maioria das funcionalidades do R decorrem da utilização de funções:  
+- **Built-in Vs. User-defined** 
+- As funções são um tipo de objeto específicos do R  
+- Definida por um conjunto de expressões  
+- Uma função incluí geralmente:  
+  - Conjunto de argumentos, dentro de parênteses (input)  
+  - Expressões a ser executar  
+  - Resultado da função (output)  
+
+```{r}
+sample(1:10, 4) # Exemplo de função com dois argumentos
+```
+
+## Funções R (cont.) 
+Dois exemplos simples que ilustram a importância das funções...   
+
+### Fórmula para cálculo da média  
+
+$$\overline{x}=\frac{\sum_{i = 1}^{n} x_{i}}
+{n}$$  
+
+$\sum_{i = 1}^{n} x_{i}$ = somatório de todos os x  
+${n}$ = número de dados  
+
+```{r, echo = TRUE}
+a <- c(9, 2, 5, 4, 12, 7, 8, 11, 9, 3, 7, 4, 12, 5, 4, 10, 9, 6, 9, 4)
+```
+
+## Funções R (cont.)
+### Função para cálculo da média  
+```{r, eval=FALSE}
+sum(a)
+length(a)
+sum(a)/length(a)
+mean <- sum(a)/length(a)
+```
+
+Mais simples, usando função base do R
+```{r, echo = TRUE}
+mean(a) 
+```
+
+
+## Funções R (cont.) 
+### Fórmula para cálculo do desvio padrão  
+
+$${S}=\sqrt{
+\frac{1}{n-1}
+{\sum_{i = 1}^{n} (x_{i}-\overline{x})^{2}}
+}$$
+
+${n}$ = número de dados  
+$\overline{x}$ = média de x  
+
+
+```{r, eval=FALSE}
+mean(a) # OR sum(a)/length(a)
+(a-mean(a))^2
+sum((a-mean(a))^2)
+1/(length(a)-1)
+1/(length(a)-1)*sum((a-mean(a))^2)
+sqrt(1/(length(a)-1)*sum((a-mean(a))^2))
+```
+
+
+## Funções R (cont.) 
+
+Mais simples, criando a nossa função
+```{r}
+sd_user <- function(a) {
+  sqrt(1/(length(a)-1)*sum((a-mean(a))^2))
+}
+sd_user(a)
+```
+
+Ou, ainda mais simples, usando função base do R
+```{r, echo = TRUE}
+sd(a)
+```
+
+## Funções Básicas - Sumário de dados
+Vamos exemplificar algumas funções base do R com recurso a BD mtcars
+```{r}
+data(mtcars)
+class(mtcars) # reports the data format
+dim(mtcars) # reports data dimensions
+names(mtcars) # view variable names
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r, echo = TRUE}
+str(mtcars) # summarizes data structure
+
+head(mtcars) # returns first observations
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r}
+mtcars[2,] # returns line 2
+mtcars[,1] # returns collumn 1
+mtcars$mpg # extract column "mpg"
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r}
+summary(mtcars[,1:8]) # summarize R objects
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r, echo = TRUE}
+plot(mtcars$qsec) # plot 1/4 mile time
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r, echo = TRUE}
+hist(mtcars$qsec) # histogram for 1/4 mile time
+```
+
+## Funções Básicas - Sumário de dados (cont.)
+```{r, echo = TRUE}
+mean(mtcars$hp)
+sd(mtcars$hp)
+cor(mtcars[,c(4,6,7)])
+```
+
+## Fórmulas no R
+### As fórmulas são tipos especiais de objetos do R (type = *language*)  
+- Especialmente utilizadas quando pretendemos especificar modelos estatísticos  
+
+```{r, echo = TRUE}
+form <- y ~ x
+class(form)
+```
+
+O operador **~** informa o R que se trata de um objeto de classe fórmula   
+- Separa a VD (resposta), **à esquerda**, da VI (preditor), **à direita**   
+- Diferentes variáveis preditoras podem ser separadas pelo sinal **+**  
+  
+*Outros sinais são usados para modificar a fórmula/modelo*   
+
+## Fórmulas no R (cont.)
+### Alguns exemplo de fórmulas são:  
+y ~ x (y as a function of x)   
+y ~ x + z (y as a function of x and z)  
+y ~ x*z (y as a function of x, z, and the interaction between x and z)  
+
+Estimação de um modelo de regressão linear  
+- Explicar qsec (1/4 mile time) em função de hp (horse power)
+```{r, echo = TRUE}
+names(mtcars)
+model1 <- lm(qsec ~ hp, data = mtcars) # linear regression model
+```
+
+## Fórmulas no R (cont.)
+```{r, echo = TRUE}
+summary(model1)
+```
+
+## Fórmulas no R (cont.)
+```{r, echo = TRUE}
+plot(qsec ~ hp, data = mtcars)
+abline(model1, lwd=2)
+pre <- predict(model1) # calculate predicted values
+# plot distances between points and the regression line
+segments(x0=mtcars$hp, y0=mtcars$qsec, x1=mtcars$hp, y1=pre, col="darkred")
+```
+
+## Fórmulas no R (cont.)
+### Estimação de um modelo de variância (ANOVA) -  regressão com VI dummy
+
+```{r, echo = TRUE}
+model2 <- aov(mpg ~ as.factor(cyl), data=mtcars)  
+summary(model2) 
+```
+*F-test is the omnibus test of the differences between the groups' mean*
+
+## Fórmulas no R (cont.)
+```{r, echo = TRUE}
+ # 2 cylinders is the reference category
+model2$coefficients
+# post-hoc test - which specific groups’s means (compared with each other) are different?
+TukeyHSD(model2) 
+```
+
+## Fórmulas no R (cont.) 
+```{r, echo = TRUE}
+plot(mpg ~ as.factor(cyl), data=mtcars)
+```
+
+
+
+# Alguns pacotes úteis 
+
+## Pacotes R - Instalar, carregar, atualizar, descarregar e desinstalar  
+Um pacote no R consiste numa coleção de funções, dados e código compilado - Existe um grande número de [pacotes para R]("http://cran.stat.ucla.edu/web/packages/available_packages_by_name.html")  
+- Este pacotes estão alojados no [CRAN](https://www.r-project.org/) e podem ser instalados gratuitamente  
+- Após download, os pacotes ficam guardados no nosso computador, numa pasta denominada de *library*.  
+
+```{r, eval = FALSE}
+library() # lists installed packages
+search() # lists loaded packages 
+packageVersion("psych") # check package version
+citation("psych") # package citation 
+```
+
+## Instalar pacotes
+Existem várias formas de instalar pacotes no RStudio  
+- Opção **point & click** no RStudio: **Tools > Install Packages...**  
+- Código R, que pode ser gravado e executado sempre que iniciar sessão  
+
+```{r, eval = FALSE, echo = TRUE}
+# Download package
+install.packages("ggplot2")  
+?install.packages
+# loading packages
+library(Hmisc) 
+
+help(package="Hmisc")
+``` 
+
+## O pacote *"data.table"*
+- Usado para trabalhar com dados em formato tabular    
+- Permite importar e manipular dados de forma muito eficiente    
+- Usa data.table em vez do formato data.frame (por defeito no R)    
+```{r, echo=TRUE, eval=FALSE}
+install.packages("data.table")
+help(package="data.table")
+```
+
+```{r}
+library(data.table)
+```
+
+## O pacote *"data.table"*
+A função fread() permite importar dados de forma rápida e fácil  
+```{r, eval=FALSE}
+?data.table::fread
+```
+
+```{r, echo=TRUE}
+bechdel <- fread("G:\\My Drive\\FPCEUP\\R trainning\\GitRepo\\R crash course\\R_crash_course\\R crash course_Data\\bechdel.csv")
+names(bechdel)
+head(bechdel,3)
+```
+
+## O pacote *"psych"*
+Incluí muitas funções úteis para análise de dados
+```{r, eval=FALSE}
+install.packages("psych")
+help(package="psych")
+```
+```{r}
+library(psych)
+```
+```{r}
+class(bechdel)
+bechdel$movie_title <- as.character(bechdel$movie_title)
+bechdel$bechdel_test_binary <- as.factor(bechdel$bechdel_test_binary)
+sapply(bechdel, class)
+```
+
+## O pacote *"psych"*
+```{r, echo=TRUE}
+names(bechdel)
+psych::describe(bechdel[ ,c(3,5)], range=FALSE)
+
+```
+
+## O pacote *"psych"*
+```{r, echo=TRUE}
+describeBy(bechdel[ ,5], group=bechdel[ ,4], range=FALSE)
+```
+
+## O pacote *"psych"*
+```{r, echo=TRUE}
+reliab <- psych::alpha(bechdel[ ,c(5, 6)]) # Consistência interna
+reliab$total
+```
+
+## O pacote *"psych"*
+```{r, echo=TRUE}
+correlations <- corr.test(bechdel[ ,c(3, 5:7)])
+correlations$r
+correlations$p
+```
+
+## O pacote *"psych"*
+```{r, echo=TRUE}
+cor.plot(bechdel[ ,c(3, 5:7)])
+```
+
+## Outros pacotes
+- O pacote [ggplo2](https://cran.r-project.org/web/packages/ggplot2/index.html) para criar gráficos    
+- Os pacotes [mice](https://cran.r-project.org/web/packages/mice/index.html) e [amelia](https://cran.r-project.org/web/packages/Amelia/index.html) para análise e imputação de dados omissos   
+- Os pacotes [nlme](https://cran.r-project.org/web/packages/nlme/nlme.pdf) e [lme4](https://cran.r-project.org/web/packages/lme4/lme4.pdf) para modelos multinível   
+- Os pacotes [lavaan](https://cran.r-project.org/web/packages/lavaan/index.html) e [sem](https://cran.r-project.org/web/packages/sem/sem.pdf) para modelos de equações estruturais   
+- ...
