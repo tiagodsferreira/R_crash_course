@@ -10,7 +10,10 @@ Este curso está dividido em 3 parte:
 -   Funções integradas
 -   Pacotes R
 
-Poderão descarregar todos os ficheiros deste arquivo através do menu "Code" ("Download ZIP")
+Poderão descarregar todos os ficheiros deste arquivo através do menu Code > Download ZIP
+
+[![Download Material](https://img.shields.io/badge/Download-Material-blue?style=for-the-badge&logo=github)](https://github.com/tiagodsferreira/R_crash_course/archive/refs/heads/main.zip)
+
 
 ## Pasta "R crash course_Data"
 Contém as bases de dados usadas no módulo pedagógico
