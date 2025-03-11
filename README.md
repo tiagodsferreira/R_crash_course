@@ -1,24 +1,25 @@
-# Análise de dados longitudinais
-Bem-vindos ao curso “Análise de dados longitudinais - Parte 1”!!!
+# Introdução ao R (3h)
+
+Os materiais neste repositório servem de apoio a um módulo pedagógico de introdução à linguagem de programação R. 
+Este curso tem a duração estimada de 3h, sendo composto por um momento expositivo e por um momento de aplicação das aprendizagem.
 
 Este curso está dividido em 3 parte:
-- Parte 1: “Breve introdução ao R”;
-- Parte 2: “O pacote lavaan para equações estruturais”;
-- Parte 3: “Modelos longitudinais”.
+-   Funcionamento básico do R e RStudio
+-   Operadores e objetos
+-   Estruturas de dados
+-   Funções integradas
+-   Pacotes R
 
-Neste arquivo encontram-se todos os materiais de apoio à PARTE 1.
 Poderão descarregar todos os ficheiros deste arquivo através do menu "Code" ("Download ZIP")
 
 ## Pasta "R crash course_Data"
-Contém as bases de dados usadas na Parte 1
+Contém as bases de dados usadas no módulo pedagógico
 
 ## Pasta "R crash course_Pres"
-Contém apresentação com conteúdos referentes à Parte 1
+Contém apresentação com conteúdos referentes ao módulo pedagógico
 
 ## Pasta "R crash course_Code"
-Ficheiro sintaxe R com código utilizado na apresentação
+Ficheiro sintaxe R com código utilizado no módulo pedagógico
 
 ## Pasta "R crash course_Exer"
 Contem exercício sobre conteúdos de introdução ao R (Parte 1)
-
-### Caso se justifique acrescentarei a este arquivo outros materiais necessários ao workshop.
