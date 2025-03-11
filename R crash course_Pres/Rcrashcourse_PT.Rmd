@@ -565,7 +565,6 @@ Esta medida de viés de género considera 3 critérios:\
 
 Importação do ficheiro "bechdel.csv" e criação da base de dados "bechdel"
 
-"G:\\My Drive\\FPCEUP\\AtividadeDocente\\R_crash_course\\R crash course_Data"
 
 ```{r}
 bechdel <-

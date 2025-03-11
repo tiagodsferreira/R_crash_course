@@ -1,0 +1,107 @@
+---
+title: "Introdução ao R"
+subtitle: "Exercício e soluções"
+author: "Tiago Ferreira"
+output:
+  html_document:
+    code_folding: hide
+---
+---
+
+```{r, setup, include=FALSE}
+library("psych")   # Load additional packages here 
+library("datasets")  
+library("lattice")
+library("psych")
+library("Hmisc")
+library("ggplot2")
+
+# Some customization.  You can alter or delete as desired (if you know what you are doing).
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```  
+
+**EXERCÍCIO 1**  
+
+1. Iniciar o R e verificar o local ou diretório de trabalho. Colocar nesse local o ficheiro de dados "dogs.csv";  
+```{r}
+getwd()
+```
+
+
+2. Importar a base de dados dogs, atribuindo essa estrutura de dados ao valor DOGS. Ver datalhes da base de dados em: https://data.world/len/intelligence-of-dogs;    
+
+```{r}
+DOGS <- read.csv("G:\\My Drive\\FPCEUP\\AtividadeDocente\\R_crash_course\\R crash course_Data\\dogs.csv")
+# pode usar a choose.files() para selecionar mais facilmente o ficheiro
+```
+
+
+3. Verificar classe, estrutura, nomes das variáveis e primeiras linhas/observações de DOGS;    
+```{r}
+class(DOGS)
+str(DOGS)
+names(DOGS)
+head(DOGS)
+```
+
+
+4. Visualizar lista das raças na base de dados;  
+```{r}
+DOGS$Breed 
+```
+
+
+5. Fazer sumário das variáveis em DOGS;   
+```{r}
+summary(DOGS)
+```
+
+
+6. Criar e visualizar o objeto "dif_reps" definido pela diferença entre variáveis "reps_upper" e "reps_lower";  
+```{r}
+dif_reps <- DOGS$reps_upper - DOGS$reps_lower
+dif_reps 
+```
+  
+
+7. Utilizar a função plot() para visualizar a variáveis "Classification". Use as.factor() se necessário;  
+```{r}
+plot(as.factor(DOGS$Classification))
+```
+
+
+8. Fazer um histograma para a variável "obey"";  
+```{r}
+hist(DOGS$obey)
+```
+
+
+9. Instalar (se necessário) e carregar o pacote "psych";  
+```{r, echo = TRUE, eval=FALSE}
+install.packages("psych")
+library(psych)
+```
+
+
+10. Usar as funcionalidades deste pacote para calcular estatística descritiva básica e correlações para as variáveis "obey", "reps_lower" e "reps_upper";  
+```{r}
+psych::describe(DOGS[3:5])
+corr.test(DOGS[3:5])
+```
+
+
+11. Criar um boxplot que represente o nível de obediência por cada classificação de raça;  
+```{r}
+plot(obey ~ as.factor(Classification), data=DOGS)
+```
+
+
+12. Criar um modelo para verificar a existência de um efeito da classificação no nível de obediência. Clarificar que pares de classificações apresentam diferenças significativas em termos do seu nível de obediência;
+```{r}
+model1 <- aov(obey ~ Classification, data=DOGS)  
+summary(model1) 
+TukeyHSD(model1)
+```
+
