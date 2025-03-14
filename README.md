@@ -25,7 +25,7 @@ Contém apresentação com conteúdos referentes ao módulo pedagógico
 Ficheiro sintaxe R com código utilizado no módulo pedagógico
 
 ## Pasta "R crash course_Exer"
-Contem exercício sobre conteúdos de introdução ao R (Parte 1)
+Contem exercício sobre conteúdos do módulo pedagógico
 
 
 
