@@ -4,11 +4,11 @@ Os materiais neste repositório servem de apoio a um módulo pedagógico de intr
 Este curso tem a duração estimada de 3h, sendo composto por um momento expositivo e por um momento de aplicação das aprendizagem.
 
 Este curso está dividido em 3 parte:
--   Funcionamento básico do R e RStudio
--   Operadores e objetos
--   Estruturas de dados
--   Funções integradas
--   Pacotes R
+-   Funcionamento básico do R e RStudio;
+-   Operadores e objetos;
+-   Estruturas de dados;
+-   Funções integradas;
+-   Pacotes R.
 
 Poderão descarregar todos os ficheiros deste arquivo:
 
