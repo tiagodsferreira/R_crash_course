@@ -42,7 +42,6 @@ knitr::opts_chunk$set(
 
 ## O que é o R?
 
--   Software estatístico livre
 -   Linguagem de programação
 -   Análise estatística
 -   Visualização de dados
@@ -82,13 +81,16 @@ O R e RStudio são compatíveis com os principais OS's:\
 knitr::include_graphics("G:\\My Drive\\FPCEUP\\AtividadeDocente\\R_crash_course\\Rcrash_figures\\r.png")
 ```
 
-A instalação básica recurso que permitem: - Criar diferentes tipos de estruturas de dados - Editar e gerir dados - Analisar e visualizar dados
-
--   Pacotes adicionais disponíveis para utilização livre em [CRAN](https://www.r-project.org/).\*
+A instalação básica recurso que permitem:   
+- Criar diferentes tipos de estruturas de dados  
+- Editar e gerir dados   
+- Analisar e visualizar dados  
+- Pacotes adicionais disponíveis para utilização livre em [CRAN](https://www.r-project.org/).\*
 
 ## O RStudio (IDE)
 
-Razões para utilizar o RStudio: - Torna mais fácil a produção de scripts (code completion)\
+Razões para utilizar o RStudio:   
+- Torna mais fácil a produção de scripts (code completion)\
 - Facilita a edição e execução do código R\
 - Acesso facilitado (interface gráfico) a muitas funcionalidades do R\
 - Permite criar e partilhar projetos R\
