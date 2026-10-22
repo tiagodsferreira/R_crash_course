@@ -1,35 +1,46 @@
-# Introdução ao R (3h)
+# Introdução ao R (9h)
 
-Os materiais neste repositório servem de apoio a um módulo pedagógico de introdução à linguagem de programação R. 
-Este curso tem a duração estimada de 3h, sendo composto por um momento expositivo e por um momento de aplicação das aprendizagem.
+Os materiais neste repositório servem de apoio a um módulo pedagógico de introdução à linguagem de programação R, inserido no Programa Doutoral em Psicologia da Universidade do Porto.
 
-Este curso está dividido em 3 parte:
--   Funcionamento básico do R e RStudio;
--   Operadores e objetos;
--   Estruturas de dados;
--   Funções integradas;
--   Pacotes R.
+O curso tem uma duração estimada de 9 horas e está organizado em três partes: um momento expositivo, um momento de aplicação das aprendizagens e, por fim, uma introdução à análise exploratória de dados com recurso ao R.
 
-Poderão descarregar todos os ficheiros deste arquivo:
+## Tópicos abordados
+
+- Funcionamento básico do R e do RStudio
+- Operadores e objetos
+- Estruturas de dados
+- Funções integradas
+- Pacotes R
+- Análise exploratória de dados
+
+## Antes de começar
+
+Para acompanhar o curso, é necessário instalar o [R](https://cran.r-project.org/) e o [RStudio](https://posit.co/download/rstudio-desktop/) no seu computador antes da primeira sessão.
+
+## Descarregar os materiais
+
+Pode descarregar todos os ficheiros deste repositório num único arquivo .zip:
 
 [![Download Material](https://img.shields.io/badge/Download-Material-blue?style=for-the-badge&logo=github)](https://github.com/tiagodsferreira/R_crash_course/archive/refs/heads/main.zip)
 
+## Organização do repositório
 
-## Pasta "R crash course_Data"
-Contém as bases de dados usadas no módulo pedagógico
+**`R crash course_Pres`** Contém a apresentação com os conteúdos do módulo.
 
-## Pasta "R crash course_Pres"
-Contém apresentação com conteúdos referentes ao módulo pedagógico
+**`R crash course_Code`** Contém o ficheiro de sintaxe R com o código utilizado ao longo do módulo.
 
-## Pasta "R crash course_Code"
-Ficheiro sintaxe R com código utilizado no módulo pedagógico
+**`R crash course_Exer`** Contém os exercícios sobre os conteúdos do módulo.
 
-## Pasta "R crash course_Exer"
-Contem exercício sobre conteúdos do módulo pedagógico
+**`R crash course_Motivation`** Contém os procedimentos de análise exploratória de dados e um exercício sobre este tópico.
 
+**`R crash course_Data`** Contém as bases de dados utilizadas no módulo.
 
+## Autoria e contacto
 
-[![Open Materials](https://img.shields.io/badge/Open-Materials-green?style=for-the-badge&logo=open-access)](https://github.com/tiagodsferreira/R_crash_course/)
+Tiago Ferreira ([email ou página])
 
+## Licença
+
+Estes materiais estão disponibilizados ao abrigo da licença [Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
 [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue?style=for-the-badge&logo=creativecommons)](https://creativecommons.org/licenses/by/4.0/)
