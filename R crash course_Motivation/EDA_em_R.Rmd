@@ -1,0 +1,362 @@
+---
+title: "Análise Exploratória de Dados em R"
+subtitle: "Faculdade de Psicologia e de Ciências da Educação - UP"
+author: "Tiago Ferreira"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+---
+
+<style>
+pre { font-size: 15px; line-height: 1.35; }
+.nota { color: #6b6b6b; font-size: 90%; }
+.destaque { background: #f3f6fb; border-left: 4px solid #2a5d9f; padding: 10px 16px; margin-top: 12px; }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4, fig.align = "center")
+set.seed(2026)  # para que os exemplos aleatórios sejam reprodutíveis
+
+# Os slides com a base SPSS só correm se o ficheiro estiver na mesma pasta
+tem_spss <- file.exists("Base AQUES.sav")
+```
+
+# Parte I · O que é a EDA?
+
+## Análise Exploratória de Dados
+
+A expressão vem de John Tukey (*Exploratory Data Analysis*, 1977). A ideia central é simples: antes de testar hipóteses, devemos **olhar** para os dados e deixar que eles nos mostrem a sua estrutura.
+
+<div class="destaque">
+A análise confirmatória pergunta *"os dados apoiam a minha hipótese?"*.
+A análise exploratória pergunta *"o que é que estes dados têm para me contar?"*.
+</div>
+
+<br>
+
+Na investigação em psicologia isto é especialmente importante, porque trabalhamos com escalas Likert, amostras pequenas, valores em falta, respostas extremas e distribuições que raramente são normais. Uma boa EDA evita que um teste estatístico nos dê uma resposta certa à pergunta errada.
+
+## Porque é que a EDA importa?
+
+Uma EDA cuidadosa serve para:
+
+1. **Conhecer a qualidade dos dados**, detetando erros de codificação, valores impossíveis (uma idade de 230 anos) ou respostas em falta.
+2. **Compreender as distribuições**, percebendo se são simétricas, enviesadas, multimodais ou com tetos e chãos.
+3. **Identificar outliers** e decidir de forma fundamentada o que fazer com eles.
+4. **Verificar pressupostos** dos modelos que vamos usar depois (normalidade, homogeneidade de variâncias, linearidade).
+5. **Gerar hipóteses** e descobrir relações que não esperávamos.
+
+<p class="nota">O famoso quarteto de Anscombe mostra quatro conjuntos de dados com médias, variâncias e correlações praticamente iguais, mas com gráficos completamente diferentes. Os números sozinhos não chegam.</p>
+
+## O quarteto de Anscombe
+
+```{r anscombe, echo=FALSE, fig.width=9, fig.height=4.2}
+op <- par(mfrow = c(1, 4), mar = c(4, 4, 2, 1))
+for (i in 1:4) {
+  x <- anscombe[[paste0("x", i)]]; y <- anscombe[[paste0("y", i)]]
+  plot(x, y, pch = 19, col = "#2a5d9f", main = paste("Conjunto", i),
+       xlim = c(3, 19), ylim = c(3, 13))
+  abline(lm(y ~ x), col = "#c0392b", lwd = 2)
+}
+par(op)
+```
+
+Em todos: média de *x* ≈ 9, média de *y* ≈ 7.5, *r* ≈ 0.82. Mesmas estatísticas, histórias muito diferentes.
+
+## O que inclui normalmente uma EDA?
+
+| Etapa | Perguntas típicas | Ferramentas em R |
+|---|---|---|
+| **1. Estrutura** | Quantos casos e variáveis? De que tipo? | `str()`, `head()`, `names()`, `class()` |
+| **2. Qualidade** | Há valores em falta? Valores impossíveis? | `summary()`, `is.na()`, `table()` |
+| **3. Univariada** | Como se distribui cada variável? | `mean()`, `median()`, `sd()`, `hist()`, `boxplot()` |
+| **4. Bivariada** | Como se relacionam as variáveis entre si? | `table()`, `cor()`, `plot()` |
+| **5. Preparação** | Que variáveis recodificar ou criar? | `factor()`, `ifelse()` |
+| **6. Relatório** | Como comunicar o que encontrei? | `psych::describe()`, `DataExplorer` |
+
+<p class="nota">Na prática estas etapas não são lineares: andamos para trás e para a frente muitas vezes.</p>
+
+## O tipo de variável manda na análise
+
+Antes de calcular seja o que for, temos de saber **que tipo de variável** temos, porque isso determina que medidas e gráficos fazem sentido.
+
+| Tipo | Exemplo em psicologia | Tendência central | Dispersão | Gráfico |
+|---|---|---|---|---|
+| Nominal | Sexo, estado civil | Moda | Frequências | Barras |
+| Ordinal | Item Likert | Mediana, moda | Amplitude interquartil | Barras |
+| Discreta | Nº de sessões de terapia | Média, mediana | DP, AIQ | Barras, histograma |
+| Contínua | Tempo de reação, IMC | Média, mediana | DP, variância, AIQ | Histograma, boxplot |
+
+<p class="nota">Em R, as variáveis qualitativas devem ser guardadas como `factor`; as ordinais como `factor(..., ordered = TRUE)`.</p>
+
+# Parte II · Um exemplo prático
+
+## O plano do exemplo
+
+Vamos seguir um percurso em duas fases.
+
+**Fase 1, dados simulados.** Criamos variáveis de cada tipo, juntamo-las numa base de dados e calculamos medidas de tendência central e de dispersão.
+
+**Fase 2, dados reais.** Importamos uma base do SPSS, preparamos as variáveis (recodificar, criar, categorizar) e geramos um relatório exploratório automático.
+
+<div class="destaque">
+Todo o código destes slides pode ser corrido diretamente no RStudio. Para a segunda fase é preciso ter o ficheiro `Base AQUES.sav` na mesma pasta que este documento.
+</div>
+
+## 1.1 Variáveis qualitativas: nominais
+
+```{r nominal}
+# Um vetor de texto simples
+nominal <- c("green", "blue", "yellow", "red", "blue")
+
+# Um fator sem ordem: cidades de Portugal
+non_ordered <- factor(c("Porto", "Lisboa", "Braga", "Aveiro", "Coimbra"))
+
+# Uma amostra aleatória de 50 cidades
+city <- sample(non_ordered, 50, replace = TRUE)
+table(city)
+```
+
+<p class="nota">Um `factor` guarda as categorias possíveis (os *levels*). É assim que o R sabe que a variável é qualitativa.</p>
+
+## 1.1 Variáveis qualitativas: ordinais
+
+```{r ordinal}
+ordered_levels <- c("strongly disagree", "disagree", "neutral",
+                    "agree", "strongly agree")
+
+satisfaction <- factor(sample(ordered_levels, 50, replace = TRUE),
+                       levels  = ordered_levels,
+                       ordered = TRUE)
+
+head(satisfaction)
+```
+
+O argumento `ordered = TRUE` diz ao R que existe uma ordem entre as categorias, tal como numa escala Likert. Repare no símbolo `<` entre os níveis.
+
+## 1.2 Variáveis quantitativas
+
+```{r quantitativas}
+# Discreta: número de dias de trabalho por semana (0 a 7)
+weekdays_worked <- rbinom(50, 7, prob = 0.5)
+
+# Contínua: salário mensal em euros
+salary <- rnorm(50, mean = 1200, sd = 300)
+```
+
+```{r hist-salario, fig.height=3.2}
+hist(salary, main = "Salary Distribution", xlab = "Salary (Euros)",
+     col = "#cfdcef", border = "white")
+```
+
+## 2. Juntar tudo numa base de dados
+
+```{r dataframe}
+data <- data.frame(color        = nominal,
+                   city         = city,
+                   satisfaction = satisfaction,
+                   weekdays     = weekdays_worked,
+                   salary       = salary)
+summary(data)
+```
+
+<p class="nota">Repare que `nominal` só tem 5 valores. O R "recicla-o" até chegar aos 50 casos, o que funciona porque 50 é múltiplo de 5, mas é um comportamento a que convém estar atento.</p>
+
+## 3. Medidas de tendência central
+
+**Moda**, para variáveis nominais:
+
+```{r moda}
+color_table <- table(data$color)
+most_frequent_color <- names(which.max(color_table))
+print(paste("The most frequent color is:", most_frequent_color))
+```
+
+**Média**, para variáveis quantitativas:
+
+```{r media}
+mean(data$weekdays)
+```
+
+## 3. A mediana e um erro instrutivo
+
+```{r mediana-erro, error=TRUE}
+median(data$satisfaction)
+```
+
+O R pode recusar calcular a mediana de um fator (ou devolver uma categoria em vez de um número, dependendo da versão). A solução é trabalhar com a posição de cada categoria:
+
+```{r mediana-ok}
+median(as.numeric(data$satisfaction))
+levels(data$satisfaction)[median(as.numeric(data$satisfaction))]
+```
+
+<p class="nota">Os erros fazem parte da aprendizagem: ler a mensagem de erro é muitas vezes a forma mais rápida de perceber o que o R espera.</p>
+
+## 4. Medidas de dispersão
+
+```{r dispersao}
+range(data$salary)    # amplitude total (mínimo e máximo)
+IQR(data$salary)      # amplitude interquartil: os 50% centrais
+var(data$salary)      # variância
+sd(data$salary)       # desvio-padrão
+```
+
+## 4. O boxplot resume a dispersão
+
+```{r boxplot, fig.height=4}
+boxplot(data$salary, main = "Salary Boxplot", ylab = "Salary (Euros)",
+        col = "#cfdcef", horizontal = TRUE)
+```
+
+A caixa corresponde à amplitude interquartil, a linha central é a mediana e os pontos isolados são potenciais outliers (valores a mais de 1.5 × AIQ da caixa).
+
+## Primeira paragem
+
+<div class="destaque">
+Acabámos de criar e analisar a nossa primeira base de dados em R!
+</div>
+
+<br>
+
+Até aqui vimos como:
+
+- criar variáveis de diferentes tipos
+- juntá-las numa `data.frame`
+- calcular moda, mediana e média
+- descrever a dispersão com amplitude, AIQ, variância e desvio-padrão
+- visualizar distribuições com histogramas e boxplots
+
+Agora passamos a dados reais.
+
+## 5. Importar dados do SPSS
+
+O pacote `haven` lê ficheiros `.sav` mantendo os rótulos das variáveis.
+
+```{r importar, eval=tem_spss}
+# install.packages("haven")   # se necessário
+library(haven)
+
+data_spss <- read_sav("Base AQUES.sav")
+head(data_spss)
+```
+
+## 5. Uma primeira descrição
+
+`summary()` dá uma visão rápida; `psych::describe()` acrescenta assimetria, curtose e erro-padrão, muito úteis em psicologia.
+
+```{r describe, eval=tem_spss}
+library(psych)
+describe(data_spss)
+```
+
+<p class="nota">Valores de assimetria ou curtose muito afastados de 0 são um sinal para olhar com atenção para a distribuição dessa variável.</p>
+
+## 6.1 Conhecer as variáveis
+
+```{r conhecer, eval=tem_spss}
+class(data_spss)
+names(data_spss)
+```
+
+Este é o momento de confirmar que cada variável tem o tipo certo. No SPSS, o sexo pode estar codificado como 0 e 1, mas para o R isso é um número, não uma categoria.
+
+## 6.2 Recodificar variáveis
+
+```{r recodificar, eval=tem_spss}
+data_spss$sex <- factor(data_spss$sex, levels = c(0, 1),
+                        labels = c("male", "female"))
+data_spss$country <- factor(data_spss$country, levels = c(1, 2),
+                            labels = c("Australia", "elsewhere"))
+
+table(data_spss$country, data_spss$sex)
+```
+
+## 6.2 Visualizar duas variáveis categóricas
+
+```{r spineplot, eval=tem_spss, fig.height=4}
+plot(data_spss$country, data_spss$sex,
+     xlab = "Country", ylab = "Sex", col = c("#cfdcef", "#2a5d9f"))
+```
+
+Quando as duas variáveis são fatores, `plot()` desenha um *spineplot*: a largura das colunas reflete o tamanho de cada grupo e a altura a proporção de cada sexo.
+
+## 6.3 Converter várias variáveis em fatores
+
+```{r fatores, eval=tem_spss}
+varnames <- c("parsport", "enstat", "firstb", "pastsmok",
+              "marital", "expect", "employ")
+
+# as_factor() usa os rótulos guardados no ficheiro SPSS
+data_spss[, varnames] <- lapply(data_spss[, varnames], as_factor)
+
+# parsport tem uma ordem natural
+data_spss$parsport <- factor(data_spss$parsport, ordered = TRUE)
+```
+
+<p class="nota">`lapply()` aplica a mesma função a uma lista de variáveis, o que poupa muito código repetido.</p>
+
+## 6.4 e 6.5 Criar e categorizar variáveis
+
+```{r imc, eval=tem_spss}
+# Calcular o IMC a partir do peso (kg) e da altura (cm)
+data_spss$bmi <- data_spss$weight / (data_spss$height / 100)^2
+
+# Agrupar o IMC nas categorias da OMS
+data_spss$bmi_cat <- cut(data_spss$bmi,
+                         breaks = c(-Inf, 18.5, 25, 30, Inf),
+                         labels = c("underweight", "normal weight",
+                                    "overweight", "obesity"),
+                         right = FALSE, ordered_result = TRUE)
+table(data_spss$bmi_cat)
+```
+
+<p class="nota">O script original usa `ifelse()` encadeados, que dá o mesmo resultado. `cut()` é uma alternativa mais compacta e menos sujeita a erros quando há muitas categorias.</p>
+
+## 7. EDA automática com DataExplorer
+
+Existem vários pacotes que geram relatórios exploratórios completos com uma só linha. Uma boa lista está [neste post do R-bloggers](https://www.r-bloggers.com/2024/10/top-10-r-packages-for-exploratory-data-analysis-eda-bookmark-this/).
+
+```{r dataexplorer, eval=FALSE}
+# install.packages("DataExplorer")   # se necessário
+library(DataExplorer)
+create_report(data_spss)
+```
+
+O relatório inclui a estrutura da base, os valores em falta, histogramas, gráficos de barras, gráficos QQ, a matriz de correlações e uma análise de componentes principais.
+
+<p class="nota">Os relatórios automáticos são um excelente ponto de partida, mas não substituem o nosso juízo: cabe-nos a nós decidir o que é relevante.</p>
+
+## 7. Uma espreitadela ao relatório
+
+```{r de-missing, eval=tem_spss, fig.height=4.2}
+library(DataExplorer)
+plot_missing(data_spss)
+```
+
+## Para levar para casa
+
+<div class="destaque">
+Importámos, preparámos e explorámos uma base de dados real em R!
+</div>
+
+<br>
+
+Uma EDA bem feita responde a três perguntas antes de qualquer teste estatístico: os dados estão corretos? Como se distribuem? Como se relacionam?
+
+Em R, o percurso típico é **importar → inspecionar → recodificar → descrever → visualizar → reportar**, e as funções que vimos hoje cobrem a maior parte desse caminho.
+
+O próximo passo é praticar com os vossos próprios dados. Quanto mais o fizerem, mais natural se torna.
+
+## Alguns recursos
+
+- Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
+- Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for Data Science* (2.ª ed.), capítulo sobre EDA. Disponível em [r4ds.hadley.nz](https://r4ds.hadley.nz).
+- Revelle, W. Documentação do pacote `psych`: [personality-project.org/r/psych](https://personality-project.org/r/psych/).
+- [Top 10 R packages for EDA (R-bloggers, 2024)](https://www.r-bloggers.com/2024/10/top-10-r-packages-for-exploratory-data-analysis-eda-bookmark-this/)
+
+<br>
+<center>**Obrigado!**</center>
